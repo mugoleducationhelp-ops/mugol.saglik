@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuGöl Sağlık Elite</title>
+    
+    <!-- Fontlar: Inter (Daha teknolojik ve okunaklı) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- İkonlar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* --- Gündüz Teması (Default) --- */
+            --bg-body: #f3f6f9;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #ffffff;
+            --input-border: #e2e8f0;
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.1);
+            
+            /* Marka Renkleri */
+            --primary: #4f46e5; /* İndigo */
+            --primary-grad: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            --secondary: #ec4899; /* Pembe Aksan */
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+
+            --radius-lg: 28px;
+            --radius-md: 18px;
+        }
+
+        /* --- Gece Teması (Dark Mode) --- */
+        body.dark-mode {
+            --bg-body: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #1e293b;
+            --input-border: #334155;
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Arkaplan Şekilleri */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 15s infinite ease-in-out;
+        }
+        .blob-1 { width: 350px; height: 350px; background: #6366f1; top: -10%; left: -10%; }
+        .blob-2 { width: 300px; height: 300px; background: #ec4899; bottom: -10%; right: -10%; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        /* --- Ana Kasa --- */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Üst Bar (Logo + Dark Mode Toggle) */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 25px 0 25px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 14px;
+            padding: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            object-fit: contain;
+        }
+        
+        .logo-icon-fallback {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fff 0%, #f1f5f9 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .app-title h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+        .app-title span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { transform: scale(1.05); }
+
+        /* Kullanıcı Selamlama */
+        .user-welcome {
+            padding: 20px 25px 5px 25px;
+        }
+        .name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed var(--input-border);
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 150px;
+            padding: 5px 0;
+            outline: none;
+        }
+        .name-input:focus { border-color: var(--primary); }
+
+        /* Navigasyon */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 20px 25px;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 12px 5px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item i { font-size: 1.2rem; margin-bottom: 2px; }
+
+        .nav-item.active {
+            background: var(--input-bg);
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .nav-item:hover:not(.active) { background: rgba(255,255,255,0.1); color: var(--text-main); }
+
+        /* İçerik */
+        .tab-content {
+            display: none;
+            padding: 0 25px 30px 25px;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        /* Formlar */
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .form-col { flex: 1; }
+
+        .field-group { position: relative; margin-bottom: 12px; }
+        .field-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        input, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            padding: 16px 16px 16px 45px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            appearance: none;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        /* Modern Buton */
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            margin-top: 10px;
+            background: var(--primary-grad);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:hover { box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.5); }
+
+        /* Sonuç Kartı */
+        .result-card {
+            background: var(--input-bg);
+            border-radius: var(--radius-md);
+            margin-top: 25px;
+            padding: 25px;
+            text-align: center;
+            display: none;
+            border: 1px solid var(--input-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .result-card.show { display: block; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .res-value {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        .res-label { font-size: 1.1rem; color: var(--text-main); font-weight: 600; }
+
+        /* --- Dairesel Grafikler (Makro) --- */
+        .macro-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .macro-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: conic-gradient(var(--color) 0%, var(--input-bg) 0%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .macro-circle::after {
+            content: '';
+            position: absolute;
+            width: 58px;
+            height: 58px;
+            background: var(--input-bg);
+            border-radius: 50%;
+        }
+        .macro-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .macro-content span { font-size: 0.9rem; color: var(--text-main); font-weight: 800; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Dekoratif Arka Plan -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="app-container">
+    
+    <!-- Üst Bar -->
+    <div class="top-bar">
+        <div class="logo-area">
+            <!-- Logo Kontrolü: Hata verirse ikonu göster -->
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'; document.getElementById('fb-icon').style.display='flex'">
+            <div id="fb-icon" class="logo-icon-fallback" style="display:none;">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            
+            <div class="app-title">
+                <h1>MuGöl Sağlık</h1>
+                <span>Elite Edition</span>
+            </div>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Kişiselleştirme -->
+    <div class="user-welcome">
+        <span style="color:var(--text-muted); font-size:0.9rem;">Merhaba,</span>
+        <input type="text" id="username" class="name-input" placeholder="İsminiz..." oninput="saveName()">
+    </div>
+
+    <!-- Navigasyon -->
+    <div class="nav-grid">
+        <button class="nav-item active" onclick="switchTab('bmi', this)">
+            <i class="fa-solid fa-weight-scale"></i> VKİ
+        </button>
+        <button class="nav-item" onclick="switchTab('cal', this)">
+            <i class="fa-solid fa-fire"></i> Kalori
+        </button>
+        <button class="nav-item" onclick="switchTab('water', this)">
+            <i class="fa-solid fa-droplet"></i> Su
+        </button>
+        <button class="nav-item" onclick="switchTab('pulse', this)">
+            <i class="fa-solid fa-heart-pulse"></i> Nabız
+        </button>
+    </div>
+
+    <!-- 1. VKİ TAB -->
+    <div id="bmi" class="tab-content active">
+        <h2>Vücut Analizi</h2>
+        <div class="form-row">
+            <div class="form-col field-group">
+                <i class="fa-solid fa-venus-mars"></i>
+                <select id="b-gender" onchange="autoSave()">
+                    <option value="m">Erkek</option>
+                    <option value="f">Kadın</option>
+                </select>
+            </div>
+            <div class="form-col field-group">
+                <i class="fa-solid fa-cake-candles"></i>
+                <input type="number" id="b-age" placeholder="Yaş" oninput="autoSave()">
+            </div>
+        </div>
+        <div class="field-group">
+            <i class="fa-solid fa-ruler"></i>
+            <input type="number" id="b-h" placeholder="Boy (cm)" oninput="autoSave()">
+        </div>
+        <div class="field-group">
+            <i class="fa-solid fa-weight-hanging"></i>
+            <input type="number" id="b-w" placeholder="Kilo (kg)" oninput="autoSave()">
+        </div>
+        <button class="btn-primary" onclick="calcBMI()">Analiz Et</button>
+
+        <div id="res-bmi" class="result-card">
+            <div class="res-value" id="val-bmi">--</div>
+            <div class="res-label" id="txt-bmi">--</div>
+            
+            <!-- Basit Progress Bar -->
+            <div style="height:8px; background:#e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden; position:relative;">
+                <div id="bmi-bar" style="height:100%; width:0%; background:var(--primary); transition:width 1s ease, background 0.3s;"></div>
+            </div>
+            
+            <p style="font-size:0.8rem; color:var(--text-muted);">
+                Kişisel aralığınız: <span id="ideal-weight-range">--</span> kg
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. KALORİ TAB -->
+    <div id="cal" class="tab-content">
+        <h2>Makro Planlayıcı</h2>
+        <div class="form-row">
+            <div class="form-col field-group">
+                <i class="fa-solid fa-venus-mars"></i>
+                <select id="c-gen" onchange="autoSave()">
+                    <option value="m">Erkek</option>
+                    <option value="f">Kadın</option>
+                </select>
+            </div>
+            <div class="form-col field-group">
+                <i class="fa-solid fa-cake-candles"></i>
+                <input type="number" id="c-age" placeholder="Yaş" oninput="autoSave()">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-col field-group">
+                <i class="fa-solid fa-weight-hanging"></i>
+                <input type="number" id="c-w" placeholder="Kilo" oninput="autoSave()">
+            </div>
+            <div class="form-col field-group">
+                <i class="fa-solid fa-ruler-vertical"></i>
+                <input type="number" id="c-h" placeholder="Boy" oninput="autoSave()">
+            </div>
+        </div>
+        <div class="field-group">
+            <i class="fa-solid fa-person-running"></i>
+            <select id="c-act" onchange="autoSave()">
+                <option value="1.2">Hareketsiz (Ofis Çalışanı)</option>
+                <option value="1.375">Az Aktif (1-3 gün spor)</option>
+                <option value="1.55">Orta Aktif (3-5 gün spor)</option>
+                <option value="1.725">Çok Aktif (6-7 gün spor)</option>
+            </select>
+        </div>
+        <div class="field-group">
+            <i class="fa-solid fa-bullseye"></i>
+            <select id="c-goal" onchange="autoSave()">
+                <option value="0">Kilomu Koru</option>
+                <option value="-500">Kilo Ver (-500 kcal)</option>
+                <option value="500">Kilo Al (+500 kcal)</option>
+            </select>
+        </div>
+        <button class="btn-primary" onclick="calcCal()">Plan Oluştur</button>
+
+        <div id="res-cal" class="result-card">
+            <div class="res-value" id="val-cal">--</div>
+            <div class="res-label">kcal / gün</div>
+
+            <!-- Dairesel Grafikler -->
+            <div class="macro-container">
+                <div class="macro-circle" id="circle-pro" style="--color:var(--danger)">
+                    <div class="macro-content"><span id="m-pro">0</span>PRO</div>
+                </div>
+                <div class="macro-circle" id="circle-carb" style="--color:var(--warning)">
+                    <div class="macro-content"><span id="m-carb">0</span>KARB</div>
+                </div>
+                <div class="macro-circle" id="circle-fat" style="--color:var(--info)">
+                    <div class="macro-content"><span id="m-fat">0</span>YAĞ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SU TAB -->
+    <div id="water" class="tab-content">
+        <h2>Hidrasyon</h2>
+        <div class="field-group">
+            <i class="fa-solid fa-weight-hanging"></i>
+            <input type="number" id="w-w" placeholder="Kilonuz (kg)" oninput="autoSave()">
+        </div>
+        <button class="btn-primary" onclick="calcWater()">Hesapla</button>
+
+        <div id="res-water" class="result-card">
+            <div class="res-value" style="color:var(--info)" id="val-water">--</div>
+            <div class="res-label">Litre Su</div>
+            <div style="margin-top:15px; font-size:0.9rem; color:var(--text-muted);" id="txt-water">--</div>
+        </div>
+    </div>
+
+    <!-- 4. NABIZ TAB -->
+    <div id="pulse" class="tab-content">
+        <h2>Nabız Bölgeleri</h2>
+        <div class="field-group">
+            <i class="fa-solid fa-cake-candles"></i>
+            <input type="number" id="p-age" placeholder="Yaşınız" oninput="autoSave()">
+        </div>
+        <button class="btn-primary" onclick="calcPulse()">Bölgeleri Göster</button>
+
+        <div id="res-pulse" class="result-card">
+            <div class="res-value" style="color:var(--danger)" id="val-maxpulse">--</div>
+            <div class="res-label">Maks. BPM</div>
+            
+            <div style="margin-top:20px; text-align:left; background:rgba(0,0,0,0.03); padding:15px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span>🔥 Yağ Yakım (%60-70)</span>
+                    <strong style="color:var(--primary)" id="z-fat">--</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>❤️ Kardiyo (%70-80)</span>
+                    <strong style="color:var(--primary)" id="z-cardio">--</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        MuGöl Sağlık Elite © 2026<br>
+        <span style="font-size:0.65rem; opacity:0.6;">Verileriniz tarayıcınızda saklanır.</span>
+    </div>
+
+</div>
+
+<script>
+    // --- BAŞLANGIÇ AYARLARI ---
+    window.onload = function() {
+        loadData();
+    };
+
+    // Tab Değiştirme
+    function switchTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // Dark Mode Toggle
+    let isDark = false;
+    function toggleTheme() {
+        isDark = !isDark;
+        document.body.classList.toggle('dark-mode');
+        const icon = document.querySelector('.theme-toggle i');
+        icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        localStorage.setItem('mugol_theme', isDark ? 'dark' : 'light');
+    }
+
+    // --- LOCAL STORAGE YÖNETİMİ ---
+    function saveName() {
+        localStorage.setItem('mugol_name', document.getElementById('username').value);
+    }
+
+    function autoSave() {
+        // Tüm inputları kaydet
+        const inputs = ['b-gender', 'b-age', 'b-h', 'b-w', 'c-gen', 'c-age', 'c-w', 'c-h', 'c-act', 'c-goal', 'w-w', 'p-age'];
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) localStorage.setItem('mugol_' + id, el.value);
+        });
+    }
+
+    function loadData() {
+        // İsim Yükle
+        const name = localStorage.getItem('mugol_name');
+        if(name) document.getElementById('username').value = name;
+
+        // Tema Yükle
+        const theme = localStorage.getItem('mugol_theme');
+        if(theme === 'dark') { toggleTheme(); } // Zaten default light olduğu için sadece dark ise tetikle
+
+        // Inputları Yükle
+        const inputs = ['b-gender', 'b-age', 'b-h', 'b-w', 'c-gen', 'c-age', 'c-w', 'c-h', 'c-act', 'c-goal', 'w-w', 'p-age'];
+        inputs.forEach(id => {
+            const val = localStorage.getItem('mugol_' + id);
+            if(val) document.getElementById(id).value = val;
+        });
+    }
+
+    // --- HESAPLAMA FONKSİYONLARI ---
+
+    function calcBMI() {
+        const h = parseFloat(document.getElementById('b-h').value);
+        const w = parseFloat(document.getElementById('b-w').value);
+        
+        if(!h || !w) return alert("Bilgileri eksik girdiniz.");
+
+        const hm = h / 100;
+        const bmi = (w / (hm * hm)).toFixed(1);
+        
+        // İdeal Kilo Aralığı (BMI 18.5 - 24.9 arası)
+        const minW = (18.5 * hm * hm).toFixed(1);
+        const maxW = (24.9 * hm * hm).toFixed(1);
+
+        let status = "", color = "", width = "0%";
+
+        if(bmi < 18.5) { 
+            status = "Zayıf"; color = "var(--info)"; width = "20%"; 
+        } else if(bmi <= 24.9) { 
+            status = "İdeal"; color = "var(--success)"; width = "50%"; 
+        } else if(bmi <= 29.9) { 
+            status = "Fazla Kilo"; color = "var(--warning)"; width = "75%"; 
+        } else { 
+            status = "Obezite"; color = "var(--danger)"; width = "100%"; 
+        }
+
+        document.getElementById('val-bmi').innerText = bmi;
+        document.getElementById('txt-bmi').innerText = status;
+        document.getElementById('ideal-weight-range').innerText = `${minW} - ${maxW}`;
+        
+        const bar = document.getElementById('bmi-bar');
+        bar.style.width = width;
+        bar.style.background = color;
+
+        document.getElementById('res-bmi').classList.add('show');
+    }
+
+    function calcCal() {
+        const age = document.getElementById('c-age').value;
+        const w = document.getElementById('c-w').value;
+        const h = document.getElementById('c-h').value;
+        const gen = document.getElementById('c-gen').value;
+        const act = document.getElementById('c-act').value;
+        const goal = document.getElementById('c-goal').value;
+
+        if(!age || !w || !h) return alert("Eksik bilgi.");
+
+        let bmr = (10 * w) + (6.25 * h) - (5 * age);
+        bmr += (gen === 'm' ? 5 : -161);
+        
+        const target = Math.round((bmr * act) + parseInt(goal));
+        const p = Math.round((target * 0.3) / 4);
+        const c = Math.round((target * 0.45) / 4);
+        const f = Math.round((target * 0.25) / 9);
+
+        document.getElementById('val-cal').innerText = target;
+        document.getElementById('m-pro').innerText = p;
+        document.getElementById('m-carb').innerText = c;
+        document.getElementById('m-fat').innerText = f;
+
+        // Dairesel Grafik CSS Güncelleme (Basit oranlama: hepsi %100 üzerinden yaklaşık doluluk)
+        // Gerçek pasta grafiği karmaşık olur, burada estetik doluluk veriyoruz.
+        document.getElementById('circle-pro').style.background = `conic-gradient(var(--danger) 30%, var(--input-bg) 0%)`;
+        document.getElementById('circle-carb').style.background = `conic-gradient(var(--warning) 45%, var(--input-bg) 0%)`;
+        document.getElementById('circle-fat').style.background = `conic-gradient(var(--info) 25%, var(--input-bg) 0%)`;
+
+        document.getElementById('res-cal').classList.add('show');
+    }
+
+    function calcWater() {
+        const w = document.getElementById('w-w').value;
+        if(!w) return;
+        const lt = (w * 0.033).toFixed(1);
+        const gl = Math.round((w * 0.033) / 0.2);
+        
+        document.getElementById('val-water').innerText = lt;
+        document.getElementById('txt-water').innerText = `Günde yaklaşık ${gl} bardak`;
+        document.getElementById('res-water').classList.add('show');
+    }
+
+    function calcPulse() {
+        const age = document.getElementById('p-age').value;
+        if(!age) return;
+        const max = 220 - age;
+        
+        document.getElementById('val-maxpulse').innerText = max;
+        document.getElementById('z-fat').innerText = `${Math.round(max*0.6)} - ${Math.round(max*0.7)}`;
+        document.getElementById('z-cardio').innerText = `${Math.round(max*0.7)} - ${Math.round(max*0.8)}`;
+        document.getElementById('res-pulse').classList.add('show');
+    }
+</script>
+
+</body>
+</html>
